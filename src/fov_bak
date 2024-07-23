@@ -1,0 +1,377 @@
+INCLUDE "game.inc"
+SECTION "FOV Functions", rom0
+
+;sets variable FOV to seqence of 24 bytes representing areas of dungeon in camera view
+; GetFOV::
+;     ld a, [wPlayerPosX]
+;     ld b, a
+;     ld a, [wPlayerPosY]  
+
+; ;get 4 cells directly ahead of player
+;     call GoForward 
+;     ld d, a 
+;     ld e, b ;save pos for later. we will travel around with this to locate FOV spaces
+;     ld c, 0 ;current position in FOV, 0-23
+;     call .updateFOV
+; ;1
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     ld d, a
+;     ld e, b
+;     call .updateFOV ; - 1 above player
+; ;2
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     ld d, a
+;     ld e, b
+;     call .updateFOV ;- 2 above player
+; ;3
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     ld d, a
+;     ld e, b
+;     call .updateFOV ; 3 above player
+
+; ;left side of FOV 04-13
+;     ld a, [wPlayerPosY]    
+;     ld b, e
+;     call GoLeft
+;     ld d, a
+;     ld e, b
+;     call .updateFOV ; 4- left of player
+
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     ld d, a
+;     ld e, b
+;     call .updateFOV ;5 -  above #4
+
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoLeft
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     call GoRight
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoLeft
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     call GoRight
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoLeft
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+;     ld a, d
+;     ld b, e
+;     call GoLeft
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+;     ld a, d
+;     ld b, e
+;     call GoLeft
+;     ld d, a
+;     ld e, b
+;     call .updateFOV
+
+;     ;;;;;;;;;;;;;;;;;;;;;;;;
+;     ;;;;;;;;;;;;;;;;;;;;;;;; right side of FOV, 14-23
+;     ;;;;;;;;;;;;;;;;;;;;;;;;
+
+;     ld a, [wPlayerPosX]
+;     ld b, a    
+;     ld a, [wPlayerPosY]
+;     call GoRight
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoRight
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     call GoLeft
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+;     ld a, d
+;     ld b, e
+;     call GoRight
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoForward
+;     call GoLeft
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoRight
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+
+;     ld a, d
+;     ld b, e
+;     call GoRight
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+;     ld a, d
+;     ld b, e
+;     call GoRight
+;     ld d, a
+;     ld e, b
+;     call .updateFOV 
+;     ret 
+
+    .updateFOV:
+        push de
+        call Get1DPositionFrom2DPosition
+        cp OUT_OF_BOUNDS_FOV_VALUE
+        jp z, .outOfBounds
+        
+        ld hl, DungeonSize
+        inc hl
+        inc hl ;inc past dungeon size bytes
+        ;get relative memory position of 
+
+        call Add8BitTo16Bit ;add position in 1d array to address    
+        ld a, [hl] ;load contents of address        
+        .returnOob:
+        ld d, a ;store tile value
+        ld a, c
+        ld hl, wFOV
+        call Add8BitTo16Bit ;add c to FOV address to get current position in array
+        ld a, d ;restore tile value to copy into FOV
+        ld [hli], a ;copy tile value to FOV
+        inc c
+        pop de
+        ret
+        .outOfBounds:
+        ld a, EMPTY_FOV_VALUE
+        jp .returnOob
+
+
+;convert x, y coordinates to a number that can be added to the address of the dungeon map to get the address of the 
+;cell at those coordinates
+;takes a, b ypos (bottom up) and xpos (left right), returns a position in 1d array. uses current dungeon for dimensions
+Get1DPositionFrom2DPosition::
+    push de
+    push bc
+    ld d, a ;d holds ypos
+    ld e, b ;e holds xpos
+    ld hl, DungeonSize
+    ld a, [hli] ;load dungeon height for comparison to y coordinate we are looking at
+    cp d
+    jp c, .outOfBounds    
+    ld b, a ;b holds dungeon height/loop counter
+    ld a, [hli] ;load dungeon width for comparison to x coordinate
+    cp e
+    jp c, .outOfBounds
+    ld c, a ;c holds dungeon width
+    ld a, b
+    inc d 
+    sub d ;subtract ypos from dungeon height for number of rows to skip/loop counter
+    ld b, a
+    inc b ;
+    ld a, 0 ; current position in 1d array    
+    .loop:
+        dec b
+        jp z, .endLoop
+        ;add dungeon width while counter > 0   
+        ;b is dungeon height - ypos
+        add c ;add dungeon width
+        jp .loop        
+    .endLoop:    
+        ;add player pos x
+        inc e ;turn xpos into length into row
+        add e
+        dec a
+        pop bc
+        pop de
+        ret
+    .outOfBounds:
+        ld a, OUT_OF_BOUNDS_FOV_VALUE
+        pop bc
+        pop de
+        ret
+
+;3 functions take a and b as ypos and xpos. checks player facing and adjusts a and b accordingly
+;facing: 0 up 1 right 2 down 3 left
+ResetA: 
+    ld a, [wScratchA]
+    ld b, [wScratchB]
+GoForward:
+    ld [wScratchA], a
+    ld a, b
+    ld [wScratchB], a
+    ;ld a, [wScratchA]
+    ld a, [wPlayerData] ;last 2 bits for facing
+    and 3
+    .up:
+        jp nz, .right
+        call IncA
+        ld b, [wScratchB]
+        ret
+    .right:
+        cp 1
+        jp nz, .down
+        call IncB
+        ld a, [wScratchA]
+        ret
+    .down:
+        cp 2
+        jp nz, .left
+        call DecA
+        ld b, [wScratchB]
+        ret
+    .left:
+        call DecB
+        ld a, [wScratchA]
+        ret
+
+GoRight:
+    ld [wScratchA], a
+    ld a, b
+    ld [wScratchB], a
+    ld a, [wScratchA]
+    ld a, [wPlayerData] ;last 2 bits for facing
+    .up:
+        cp 0
+        jp nz, .right
+        call IncB
+        ld a, [wScratchA]
+        ret
+    .right:
+        cp 1
+        jp nz, .down
+        call IncA
+        ld b, [wScratchB]
+        ret
+    .down:
+        cp 2
+        jp nz, .left
+        call DecB
+        ld a, [wScratchA]
+        ret
+    .left:
+        call DecA
+        ld b, [wScratchB]
+        ret
+
+GoLeft:
+    ld [wScratchA], a
+    ld a, b
+    ld [wScratchB], a
+    ld a, [wScratchA]
+    ld a, [wPlayerData] ;last 2 bits for facing
+    .up:
+        cp 0
+        jp nz, .right
+        call DecB
+        ld a, [wScratchA]
+        ret
+    .right:
+        cp 1
+        jp nz, .down
+        call IncA
+        ld b, [wScratchB]
+        ret
+    .down:
+        cp 2
+        jp nz, .left
+        call IncB
+        ld a, [wScratchA]
+        ret
+    .left:
+        call DecA
+        ld b, [wScratchB]
+        ret
+
+IncA:
+    ld a, [wScratchA]
+    inc a
+    ld [wScratchA], a
+    ld b, a
+    ld a, [DungeonSize]
+    dec a
+    sub b
+    ret nc ;ret if dungeonsize - ypos >= 0. not OOB
+    ld 
+    ret
+DecA:
+    ld a, [wScratchA]
+    dec a
+    ret
+IncB:
+    ld a, [wScratchB]
+    inc a
+    ld b, a
+    ld a, [wScratchA]
+    ret
+DecB:
+    ld a, [wScratchB]
+    dec a
+    ld b, a
+    ld a, [wScratchA]
+    ret
+
+OutOfBoundsFlag:
