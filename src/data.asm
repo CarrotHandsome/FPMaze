@@ -236,18 +236,24 @@ FOVSpaceOffsets::
 ; TilemapEnd::
 
 Dungeon:: ;player at row 6 column 4
-DungeonSize:: db 10, 10 ;height, width of dungeon
-    db BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE
-    db BASIC_SOLID_VALUE, $00, $00, $00, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, $00, $00, BASIC_SOLID_VALUE
-    db BASIC_SOLID_VALUE, $00, $00, $00, $00, $00, $00, $00, $00, BASIC_SOLID_VALUE
-    db BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, $00, $00, $00, BASIC_SOLID_VALUE
-    db BASIC_SOLID_VALUE, $00, $00, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, $00, $00, BASIC_SOLID_VALUE
-    db BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, $00, $00, BASIC_SOLID_VALUE ;;;
-    db BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, $00, $00, BASIC_SOLID_VALUE
-    db BASIC_SOLID_VALUE, $00, $00, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, $00, $00, $00, BASIC_SOLID_VALUE
-    db BASIC_SOLID_VALUE, $00, $00, BASIC_SOLID_VALUE, $00, BASIC_SOLID_VALUE, $00, $00, $00, BASIC_SOLID_VALUE
-    db BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE, BASIC_SOLID_VALUE
-    
+DungeonSize:: db 32, 16, 160 ;height, width of dungeon, startpoint (# of addresses into map where player starts)
+db $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $01, $00, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $00, $00, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $01, $01, $00, $01, $00, $00, $01, $01, $00, $00, $01, $01, $01, $01, $01, $00, $00, $00, $01, $00, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $01, $01, $00, $01, $00, $00, $01, $01, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $01, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $01, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $00, $00, $00, $01
+db $01, $00, $00, $01, $01, $00, $00, $00, $01, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $00, $00, $01
+db $01, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $00, $00, $00, $01, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $01, $00, $01, $00, $00, $00, $00, $01, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $01, $01, $01, $00, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00, $01, $01, $01, $01, $00, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00, $01, $01, $00, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01
+db $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01
+db $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01
+
                        ;;;
 
 ;FF  
